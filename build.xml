@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<project name="nation" default="build" basedir=".">
+ 
+    <!-- FILESET -->
+    <fileset id="sourcecode" dir="${project.basedir}/src">
+        <include name="*.php" />
+        <include name="**/*.php" />
+    </fileset>
+    <!-- END -->
+ 
+    <!-- SUITE -->
+    <target name="build" depends="cache, composer, doctrine, fixtures, php-cs-fixer, behat" />
+    <!-- END -->
+ 
+    <!-- CACHE -->
+    <target name="cache">
+        <echo message="Clearing cache ..." />
+        <exec executable="rm" checkreturn="true" passthru="true">
+            <arg value="-rf" />
+            <arg value="${project.basedir}/var/cache/test/*" />
+        </exec>
+    </target>
+    <!-- END -->
+ 
+    <!-- COMPOSER -->
+    <target name="composer">
+        <echo message="Running composer self-update ..." />
+        <exec executable="composer" checkreturn="true" passthru="true">
+            <arg value="self-update" />
+        </exec>
+        <echo message="Running composer install ..." />
+        <exec executable="composer" checkreturn="true" passthru="true">
+            <arg value="install" />
+            <arg value="--no-interaction" />
+        </exec>
+    </target>
+    <!-- END -->
+ 
+    <!-- DOCTRINE -->
+    <target name="doctrine">
+        <echo message="Generating entities ..." />
+        <exec executable="bin/console" checkreturn="true" passthru="true">
+            <arg value="doctrine:generate:entities" />
+            <arg value="AppBundle" />
+            <arg value="--no-backup" />
+            <arg value="--env=test" />
+        </exec>
+        <echo message="Creating database ..." />
+        <exec executable="bin/console" checkreturn="true" passthru="true">
+            <arg value="doctrine:schema:create" />
+            <arg value="--no-interaction" />
+            <arg value="--env=test" />
+        </exec>
+        <echo message="Updating database ..." />
+        <exec executable="bin/console" checkreturn="true" passthru="true">
+            <arg value="doctrine:schema:update" />
+            <arg value="--force" />
+            <arg value="--no-interaction" />
+            <arg value="--no-debug" />
+            <arg value="--env=test" />
+        </exec>
+    </target>
+    <!-- END -->
+ 
+    <!-- FIXTURES -->
+    <target name="fixtures">
+        <echo message="Loading data fixtures ..." />
+        <exec executable="bin/console" checkreturn="true" passthru="true">
+            <arg value="doctrine:fixtures:load" />
+            <arg value="--no-interaction" />
+            <arg value="--no-debug" />
+            <arg value="--env=test" />
+        </exec>
+    </target>
+    <!-- END -->
+ 
+    <!-- PHP-CS-FIXER -->
+    <target name="php-cs-fixer">
+        <echo message="Checking coding standards ..." />
+        <exec executable="vendor/bin/php-cs-fixer" checkreturn="true" passthru="true">
+            <arg value="fix"/>
+            <arg value="--dry-run"/>
+            <arg value="--verbose"/>
+            <arg value="--diff"/>
+        </exec>
+    </target>
+    <!-- END -->
+ 
+    <!-- BEHAT -->
+    <target name="behat">
+        <echo message="Running behat tests ..." />
+        <exec executable="vendor/bin/behat" checkreturn="true" passthru="true">
+            <arg value="--suite=app"/>
+            <arg value="--format=progress"/>
+        </exec>
+    </target>
+    <!-- END -->
+ 
+</project>
