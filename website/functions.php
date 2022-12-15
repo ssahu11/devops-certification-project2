@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Displays site name.
- */
+ * Displays site  name.
+  */
 function siteName()
 {
     echo config('name');
