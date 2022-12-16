@@ -1,0 +1,18 @@
+---
+- name: "creating container for application deploy"
+- hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+   - name: Create docker images using apache
+     command: docker build -t php-test .
+
+   - name: Tag the docker iamge to Docker Hub
+     command: "docker tag php-tag ssahu1/devops-php-project2:php-test"
+
+   - name: Push the docker iamge to Docker Hub
+     command: docker push ssahu1/devops-php-project2:php-test
+
+   - name: create container
+     command: docker run -d --name php-cont -p 8090:80 php-test
+     ignore_error: yes
