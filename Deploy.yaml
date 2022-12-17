@@ -13,4 +13,4 @@
      command: docker push ssahu1/devops-php-project2:php-tag
 
    - name: Create container
-     command: docker run -it --name php-cont -p 8090:80 php-test
+     command: docker run --name php-cont -p 8090:80 php-test
